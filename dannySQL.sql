@@ -1,0 +1,135 @@
+-- INSERT INTO sales
+--   ("customer_id", "order_date", "product_id")
+-- VALUES
+--   ('A', '2021-01-01', '1'),
+--   ('A', '2021-01-01', '2'),
+--   ('A', '2021-01-07', '2'),
+--   ('A', '2021-01-10', '3'),
+--   ('A', '2021-01-11', '3'),
+--   ('A', '2021-01-11', '3'),
+--   ('B', '2021-01-01', '2'),
+--   ('B', '2021-01-02', '2'),
+--   ('B', '2021-01-04', '1'),
+--   ('B', '2021-01-11', '1'),
+--   ('B', '2021-01-16', '3'),
+--   ('B', '2021-02-01', '3'),
+--   ('C', '2021-01-01', '3'),
+--   ('C', '2021-01-01', '3'),
+--   ('C', '2021-01-07', '3');
+--   
+--   INSERT INTO menu
+--   ("product_id", "product_name", "price")
+-- VALUES
+--   ('1', 'sushi', '10'),
+--   ('2', 'curry', '15'),
+--   ('3', 'ramen', '12');
+--   
+--   INSERT INTO members
+--   ("customer_id", "join_date")
+-- VALUES
+--   ('A', '2021-01-07'),
+--   ('B', '2021-01-09');
+
+-- What is the total amount each customer spent at the restaurant?
+-- SELECT mbrs.customer_id, sum(m.price) as cust_spend 
+-- FROM members mbrs 
+-- JOIN sales s 
+-- on mbrs.customer_id = s.customer_id
+-- JOIN menu m
+-- on s.product_id = m.product_id
+-- GROUP by mbrs.customer_id;
+
+-- How many days has each customer visited the restaurant?
+
+-- SELECT s.customer_id, count(s.order_date) from sales s GROUP by s.customer_id;
+
+-- What was the first item from the menu purchased by each customer?
+-- SELECT s.customer_id, m.product_name 
+-- FROM sales s
+-- JOIN
+-- menu m
+-- on s.product_id = m.product_id
+-- WHERE s.order_date 
+-- in (SELECT min(s.order_date) FROM sales s)
+-- GROUP by s.customer_id;
+
+-- What is the most purchased item on the menu and how many times was it purchased by all customers?
+
+-- SELECT s.product_id, m.product_name, count(s.order_date) as Order_frequency
+-- from 
+-- sales s 
+-- JOIN menu m
+-- on
+-- s.product_id = m.product_id
+-- GROUP by s.product_id
+-- ORDER by Order_frequency DESC 
+-- limit 1;
+
+
+-- Which item was the most popular for each customer?
+-- SELECT s.customer_id, m.product_name, count(s.order_date) as Order_frequency
+-- from 
+-- sales s
+-- JOIN menu m
+-- on
+-- s.product_id = m.product_id
+-- GROUP by s.customer_id
+-- ORDER by Order_frequency DESC;
+
+-- Which item was purchased first by the customer after they became a member?
+-- SELECT s.customer_id, mb.join_date, m.product_name 
+-- FROM sales s 
+-- JOIN menu m
+-- on s.product_id = m.product_id
+-- JOIN members mb
+-- on s.customer_id = mb.customer_id
+-- GROUP by s.customer_id
+-- ORDER by mb.join_date;
+-- 
+-- Which item was purchased just before the customer became a member?
+-- SELECT s.customer_id, s.order_date, m.product_name 
+-- FROM sales s 
+-- JOIN menu m
+-- on s.product_id = m.product_id
+-- JOIN members mb
+-- on s.customer_id = mb.customer_id
+-- GROUP by s.customer_id
+-- HAVING mb.join_date > s.order_date;
+
+--What is the total items and amount spent for each member before they became a member?
+-- SELECT s.customer_id, count(m.product_name) as number_of_Items_purchased, sum(m.price) as amount_spent
+-- from menu m 
+-- JOIN sales s
+-- on s.product_id = m.product_id
+-- JOIN members mb
+-- on s.customer_id = mb.customer_id 
+-- GROUP by s.customer_id
+-- HAVING mb.join_date > s.order_date;
+
+--If each $1 spent equates to 10 points and sushi has a 2x points multiplier - 
+--how many points would each customer have?
+-- SELECT s.customer_id,
+-- CASE m.product_name
+-- WHEN  "sushi"
+-- THEN 20*(m.price)
+-- ELSE 10*(m.price)
+-- END points
+-- FROM sales s JOIN menu m
+-- on s.product_id = m.product_id
+-- GROUP by s.customer_id;
+
+-- In the first week after a customer joins the program (including their join date) 
+-- they earn 2x points on all items, not just sushi - how many points do customer A and B 
+-- have at the end of January?
+
+-- SELECT s.customer_id,
+-- CASE s.order_date
+-- WHEN s.order_date BETWEEN mb.join_date AND mb.join_date + 7
+-- THEN 20*(m.price)
+-- ELSE 10*(m.price)
+-- END points
+-- FROM sales s JOIN menu m
+-- on s.product_id = m.product_id
+-- JOIN members mb
+-- on s.customer_id = mb.customer_id
+-- GROUP by s.customer_id;
