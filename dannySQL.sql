@@ -1,3 +1,4 @@
+-- https://8weeksqlchallenge.com/
 -- INSERT INTO sales
 --   ("customer_id", "order_date", "product_id")
 -- VALUES
@@ -132,4 +133,5 @@
 -- on s.product_id = m.product_id
 -- JOIN members mb
 -- on s.customer_id = mb.customer_id
+
 -- GROUP by s.customer_id;
