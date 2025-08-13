@@ -1,2 +1,2 @@
 # 8weekschallenge
-Casestudies using SQLite
+https://8weeksqlchallenge.com
